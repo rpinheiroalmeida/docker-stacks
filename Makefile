@@ -7,6 +7,7 @@ SHELL:=bash
 OWNER:=jupyter
 ARCH:=$(shell uname -m)
 DIFF_RANGE?=master...HEAD
+REPOSITORY_PATH = `pwd`
 
 # Need to list the images in build dependency order
 ifeq ($(ARCH),ppc64le)
@@ -76,6 +77,9 @@ run/%: ## run a bash in interactive mode in a stack
 
 run-sudo/%: ## run a bash in interactive mode as root in a stack
 	docker run -it --rm -u root $(OWNER)/$(notdir $@) $(SHELL)
+
+run/r-notebook:
+	docker run -p 8888:8888 -v $(REPOSITORY_PATH)/files:/home/jovyan/work -u root $(OWNER)/$(notdir $@)
 
 tx-en: ## rebuild en locale strings and push to master (req: GH_TOKEN)
 	@git config --global user.email "travis@travis-ci.org"
